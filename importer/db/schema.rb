@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140403025029) do
+ActiveRecord::Schema.define(version: 20140404165259) do
+
+  create_table "import_items", force: true do |t|
+    t.integer  "import_id",   null: false
+    t.integer  "line_number", null: false
+    t.string   "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "import_items", ["import_id", "line_number"], name: "index_import_items_on_import_id_and_line_number", unique: true
+  add_index "import_items", ["import_id"], name: "index_import_items_on_import_id"
 
   create_table "imports", force: true do |t|
     t.string   "name",                       null: false

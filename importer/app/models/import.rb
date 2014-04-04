@@ -3,6 +3,7 @@ require 'securerandom'
 
 
 class Import < ActiveRecord::Base
+  has_many :import_items
 
   validates :file_name, presence: true
   validates :name, presence: true
