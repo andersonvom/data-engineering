@@ -26,7 +26,6 @@ class Import < ActiveRecord::Base
 
   def save_items
     self.each_row do |row|
-      logger.debug("\t#{row.inspect}")
       row.update(import: self)  # keep memory low with large files
       ImportItem.import(row)
     end
