@@ -46,4 +46,20 @@ describe Import do
     end
   end
 
+  it "should save all items from TAB file" do
+    @import.stub(:file_path).and_return(Rails.root.join('..', 'example_input.tab'))
+    ImportItem.should_receive(:import).exactly(4).times
+    @import.save_items
+    @import.imported.should be_true
+  end
+
+  it "should import all files" do
+    Import.should_receive(:where).with(imported: false).and_return([@import])
+    @import.should_receive(:save_items)
+    file = double('file')
+    file.should_receive(:path)
+    @import.stub(:file).and_return(file)
+    Import.import_files
+  end
+
 end

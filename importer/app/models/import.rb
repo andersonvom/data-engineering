@@ -20,7 +20,24 @@ class Import < ActiveRecord::Base
 
   def each_row(&block)
     CSV.foreach(file_path, headers: true, col_sep: "\t") do |row|
-      yield to_attributes(row.to_hash)
+      yield to_attributes(row.to_hash.update('line number' => $.))
+    end
+  end
+
+  def save_items
+    self.each_row do |row|
+      logger.debug("\t#{row.inspect}")
+      row.update(import: self)  # keep memory low with large files
+      ImportItem.import(row)
+    end
+    self.imported = true
+    save
+  end
+
+  def self.import_files
+    self.where(imported: false).each do |import|
+      logger.info("Saving items from #{import.name} (#{import.file.path}) to DB")
+      import.save_items
     end
   end
 
