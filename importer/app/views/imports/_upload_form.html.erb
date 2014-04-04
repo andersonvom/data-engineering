@@ -1,0 +1,16 @@
+<fieldset>
+  <legend>
+    Select a TAB delimited file
+  </legend>
+
+  <%= form_for @import do |f| %>
+    <p>
+      <%= f.file_field :file %>
+    </p>
+
+    <p>
+      <%= f.submit "Import this file!" %>
+    </p>
+  <% end %>
+</fieldset>
+

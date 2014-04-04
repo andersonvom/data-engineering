@@ -4,3 +4,13 @@
   Here you can find information on the current files being imported as
   well as create new imports for other files.
 </p>
+
+<%= render 'upload_form' %>
+
+<p>
+<% if @imports.size > 0 %>
+  <%= render partial: 'import', collection: @imports %>
+<% else %>
+  No imports so far...
+<% end %>
+</p>
