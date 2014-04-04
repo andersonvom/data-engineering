@@ -38,4 +38,12 @@ describe Import do
     @import.file
   end
 
+  it "should yield TAB rows as attribute hashes" do
+    fixture_file = Rails.root.join('spec', 'fixtures', 'example_input.tab')
+    @import.stub(:file_path).and_return(fixture_file)
+    @import.each_row do |row|
+      row.include?(:purchaser_name).should be_true
+    end
+  end
+
 end
