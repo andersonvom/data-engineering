@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140404223838) do
+ActiveRecord::Schema.define(version: 20140405171139) do
 
   create_table "import_items", force: true do |t|
     t.integer  "import_id",   null: false
@@ -31,6 +31,16 @@ ActiveRecord::Schema.define(version: 20140404223838) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "items", force: true do |t|
+    t.integer  "merchant_id", null: false
+    t.string   "description", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "items", ["description"], name: "index_items_on_description", unique: true
+  add_index "items", ["merchant_id"], name: "index_items_on_merchant_id"
 
   create_table "merchant_locations", force: true do |t|
     t.integer  "merchant_id", null: false
