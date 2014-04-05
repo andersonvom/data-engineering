@@ -4,6 +4,7 @@ require 'securerandom'
 
 class Import < ActiveRecord::Base
   has_many :import_items
+  has_many :purchases
 
   validates :file_name, presence: true
   validates :name, presence: true
