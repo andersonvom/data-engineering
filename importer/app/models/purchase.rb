@@ -11,4 +11,9 @@ class Purchase < ActiveRecord::Base
   def price=(value)
     self.price_in_cents = (value.to_d * 100).round
   end
+
+  def inventory_item=(item)
+    super(item)
+    self.price = item.price
+  end
 end
