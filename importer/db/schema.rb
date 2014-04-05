@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140405171139) do
+ActiveRecord::Schema.define(version: 20140405183940) do
 
   create_table "import_items", force: true do |t|
     t.integer  "import_id",   null: false
@@ -32,6 +32,18 @@ ActiveRecord::Schema.define(version: 20140405171139) do
     t.datetime "updated_at"
   end
 
+  create_table "inventory_items", force: true do |t|
+    t.integer  "merchant_location_id", null: false
+    t.integer  "item_id",              null: false
+    t.integer  "price_in_cents",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "inventory_items", ["item_id"], name: "index_inventory_items_on_item_id"
+  add_index "inventory_items", ["merchant_location_id", "item_id"], name: "index_inventory_items_on_merchant_location_id_and_item_id", unique: true
+  add_index "inventory_items", ["merchant_location_id"], name: "index_inventory_items_on_merchant_location_id"
+
   create_table "items", force: true do |t|
     t.integer  "merchant_id", null: false
     t.string   "description", null: false
@@ -39,7 +51,7 @@ ActiveRecord::Schema.define(version: 20140405171139) do
     t.datetime "updated_at"
   end
 
-  add_index "items", ["description"], name: "index_items_on_description", unique: true
+  add_index "items", ["merchant_id", "description"], name: "index_items_on_merchant_id_and_description", unique: true
   add_index "items", ["merchant_id"], name: "index_items_on_merchant_id"
 
   create_table "merchant_locations", force: true do |t|

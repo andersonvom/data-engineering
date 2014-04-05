@@ -6,6 +6,6 @@ class CreateItems < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :items, :description, unique: true
+    add_index :items, [:merchant_id, :description], unique: true
   end
 end
