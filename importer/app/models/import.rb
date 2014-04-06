@@ -9,6 +9,11 @@ class Import < ActiveRecord::Base
   validates :file_name, presence: true
   validates :name, presence: true
 
+  after_save :store_file
+  after_destroy :delete_file
+
+  attr_accessor :temp_file
+
   def file
     File.open(file_path) if file_path
   end
@@ -16,7 +21,7 @@ class Import < ActiveRecord::Base
   def file=(file)
     self.file_name = SecureRandom.uuid + '.tab'
     self.name = file.original_filename or file_name
-    store_file(file)
+    self.temp_file = file
   end
 
   def each_row(&block)
@@ -55,10 +60,15 @@ class Import < ActiveRecord::Base
     Rails.root.join('public', 'uploads', file_name) if file_name
   end
 
-  def store_file(file)
-    File.open(file_path, 'wb') do |f|
-      f.write(file.read)
+  def store_file
+    if temp_file
+      File.open(file_path, 'wb') do |f|
+        f.write(temp_file.read)
+      end
     end
   end
 
+  def delete_file
+    FileUtils.rm file_path
+  end
 end
