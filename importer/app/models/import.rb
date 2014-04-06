@@ -14,6 +14,17 @@ class Import < ActiveRecord::Base
 
   attr_accessor :temp_file
 
+  def progress
+    {
+      success: import_items.successful.count,
+      error: import_items.failed.count,
+    }
+  end
+
+  def gross_revenue
+    purchases.sum('price_in_cents * count').to_d / 100
+  end
+
   def file
     File.open(file_path) if file_path
   end

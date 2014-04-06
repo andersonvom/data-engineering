@@ -8,6 +8,25 @@ describe Import do
     @file.stub(:original_filename).and_return('foo')
   end
 
+  describe "#gross_revenue" do
+    it "should sum all prices and counts" do
+      @import.purchases.should_receive(:sum)
+                     .with('price_in_cents * count')
+                     .and_return(1000)
+      @import.gross_revenue.should == 10.0
+    end
+  end
+
+  describe "#progress" do
+    it "should return an array of successful and failed import items" do
+      successful_items = [1,2,3]
+      failed_items = [1]
+      @import.import_items.should_receive(:successful).and_return(successful_items)
+      @import.import_items.should_receive(:failed).and_return(failed_items)
+      @import.progress.should =={success: 3, error: 1}
+    end
+  end
+
   describe "#file=" do
     before :each do
       @import.file = @file

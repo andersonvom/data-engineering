@@ -1,4 +1,11 @@
 <div>
   <strong><%= import.name %></strong>
-  <small><%= import.file_name %></small>
+  <%= "(in progress...)" unless import.imported? %>
+  <p>
+    Gross revenue: <%= import.gross_revenue %><br />
+    Progress: <%= import.progress[:success] %><br />
+    <% if import.progress[:error] > 0 %>
+    Error(s): <%= import.progress[:error] %><br />
+    <% end %>
+  </p>
 </div>

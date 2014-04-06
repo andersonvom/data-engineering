@@ -7,6 +7,9 @@ class ImportItem < ActiveRecord::Base
   attr_accessor :purchaser_name, :item_description, :item_price,
                 :purchase_count, :merchant_address, :merchant_name
 
+  scope :successful, -> { where data: nil }
+  scope :failed, -> { where.not data: nil }
+
   def self.import(attrs)
     import_item = self.new(attrs)
     if import_item.imported?
