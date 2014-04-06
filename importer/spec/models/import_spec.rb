@@ -8,34 +8,35 @@ describe Import do
     @file.stub(:original_filename).and_return('foo')
   end
 
-  it "should have a file attribute" do
-    expect(@import.file).to be_nil
+  describe "#file=" do
+    before :each do
+      @import.file = @file
+    end
+
+    it "should set the name along with the file attribute" do
+      @import.name.should == 'foo'
+    end
+
+    it "should set the file path along with the file attribute" do
+      @import.file_name.include?('.tab').should == true
+    end
+
+    it "should keep a reference to the file in memory" do
+      @import.temp_file.should == @file
+    end
   end
 
-  it "should set the name along with the file attribute" do
-    @file.should_receive(:read)
-    @import.file = @file
-    expect(@import.name).to eq('foo')
-  end
+  describe "#file" do
+    it "should be nil if no file has been set" do
+      @import.file.should be_nil
+    end
 
-  it "should set the file path along with the file attribute" do
-    @file.should_receive(:read)
-    @import.file = @file
-    @import.file_name.include?('.tab').should == true
-  end
+    it "should read the store file" do
+      @import.stub(:file_path).and_return('/path/to/file')
+      File.should_receive(:open).with('/path/to/file')
 
-  it "should store the file in the disk" do
-    @import.stub(:file_path).and_return('/path/to/file')
-    File.should_receive(:open).with('/path/to/file', 'wb')
-
-    @import.file = @file
-  end
-
-  it "should get the store file" do
-    @import.stub(:file_path).and_return('/path/to/file')
-    File.should_receive(:open).with('/path/to/file')
-
-    @import.file
+      @import.file
+    end
   end
 
   it "should yield TAB rows as attribute hashes" do
