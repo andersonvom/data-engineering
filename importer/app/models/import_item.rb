@@ -11,7 +11,8 @@ class ImportItem < ActiveRecord::Base
   scope :failed, -> { where.not data: nil }
 
   def self.import(attrs)
-    import_item = self.new(attrs)
+    import_item = get_import_item_for(attrs)
+
     if import_item.imported?
       logger.info("\tSkipping line #{import_item.line_number}. Already imported.")
     else
@@ -20,9 +21,15 @@ class ImportItem < ActiveRecord::Base
     end
   end
 
+  def self.get_import_item_for(attrs)
+    import_item = find_or_initialize_by(import: attrs[:import],
+                                        line_number: attrs[:line_number])
+    import_item.attributes = attrs
+    import_item
+  end
+
   def imported?
-    obj = self.class.find_by(import: import, line_number: line_number)
-    obj and obj.data == nil
+    data == nil and id != nil
   end
 
   def normalize!

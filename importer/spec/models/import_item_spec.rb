@@ -11,26 +11,25 @@ describe ImportItem do
   end
 
   describe "#imported?" do
-    it "should return false if item not in DB" do
-      ImportItem.should_receive(:find_by).and_return(nil)
+    it "should return false if it contains error data" do
+      @item.data = 'some error data'
       @item.imported?.should be_false
     end
 
-    it "should return false if item has no error data" do
-      @item.data = "foo error"
-      ImportItem.should_receive(:find_by).and_return(@item)
+    it "should return false if it's a new item" do
+      @item.id = nil
       @item.imported?.should be_false
     end
 
-    it "should return true if item in DB and no error data" do
-      ImportItem.should_receive(:find_by).and_return(@item)
+    it "should return true if imported and without any errors" do
+      @item.id = 100
       @item.imported?.should be_true
     end
   end
 
   describe "#self.import" do
     before :each do
-      ImportItem.should_receive(:new).and_return(@item)
+      ImportItem.should_receive(:get_import_item_for).with({foo: 'bar'}).and_return(@item)
     end
 
     it "should skip items already normalized and log it" do
@@ -43,6 +42,22 @@ describe ImportItem do
       @item.should_receive(:imported?).and_return(false)
       @item.should_receive(:normalize!)
       ImportItem.import({foo: 'bar'})
+    end
+  end
+
+  describe "#self.get_import_item_for" do
+    it "should find or initialize a new item for the given attributes" do
+      import = Import.new
+      @attrs = { import: import, line_number: 100, item_price: "99.90" }
+      item_search_info = { import: import, line_number: 100 }
+      ImportItem.should_receive(:find_or_initialize_by)
+                .with(item_search_info)
+                .and_return(@item)
+
+      item = ImportItem.get_import_item_for(@attrs)
+      item.line_number.should == 100
+      item.item_price.should == '99.90'
+      item.merchant_address.should == 'address'
     end
   end
 
