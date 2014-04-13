@@ -1,4 +1,21 @@
 namespace :importer do
+  desc "Extract items to import from TAB files"
+  task import_tab_files: [:environment] do |task, args|
+    SECS = 5
+    logger = Logger.new STDOUT
+    ActiveRecord::Base.logger = logger
+
+    begin
+      loop do
+        Import.import_files
+        logger.info "Polling for new TAB files in #{SECS} seconds..."
+        sleep SECS
+      end
+    rescue SignalException
+      logger.warn "Terminating..."
+    end
+  end
+
   desc "Generate sample input file"
   task :generate_sample do
     NUM_PURCHASES = 1000
