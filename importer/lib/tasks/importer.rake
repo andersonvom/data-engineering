@@ -1,4 +1,20 @@
 namespace :importer do
+  desc "Start the server and import services"
+  task start: [:environment] do |task, args|
+    importer_pid = nil
+    begin
+      system 'rake db:migrate'
+      importer_pid = fork do
+        system 'rake importer:import_tab_files'
+      end
+      system 'rails server'
+    rescue SignalException
+      logger.warn "Terminating..."
+      Process.kill("TERM", importer_pid)
+      Process.wait
+    end
+  end
+
   desc "Extract items to import from TAB files"
   task import_tab_files: [:environment] do |task, args|
     SECS = 5
@@ -12,7 +28,7 @@ namespace :importer do
         sleep SECS
       end
     rescue SignalException
-      logger.warn "Terminating..."
+      logger.warn "Stopping import service..."
     end
   end
 
