@@ -46,8 +46,11 @@ class Import < ActiveRecord::Base
       row.update(import: self)  # keep memory low with large files
       ImportItem.import(row)
     end
-    self.imported = true
-    save
+
+    if progress[:error] == 0
+      self.imported = true
+      save
+    end
   end
 
   def self.import_files

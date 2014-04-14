@@ -73,6 +73,14 @@ describe Import do
     @import.imported.should be_true
   end
 
+  it "should not mark as imported if progress has errors" do
+    @import.stub(:file_path).and_return(Rails.root.join('..', 'example_input.tab'))
+    ImportItem.should_receive(:import).exactly(4).times
+    @import.should_receive(:progress).and_return({error: 10})
+    @import.save_items
+    @import.imported.should be_false
+  end
+
   it "should import all files" do
     Import.should_receive(:where).with(imported: false).and_return([@import])
     @import.should_receive(:save_items)

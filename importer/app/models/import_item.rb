@@ -54,6 +54,7 @@ class ImportItem < ActiveRecord::Base
                       purchaser: purchaser,
                       inventory_item: inventory_item,
                       count: purchase_count)
+      self.data = nil
       save
     end
   end

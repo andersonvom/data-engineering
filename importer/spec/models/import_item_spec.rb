@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe ImportItem do
-
   before :each do
     @item = ImportItem.new(
       purchaser_name: 'purchaser', item_description: 'desc',
@@ -75,6 +74,7 @@ describe ImportItem do
 
       it "should import item information in a transaction" do
         @item.import = Import.new
+        @item.data = 'some error data form previous tries'
         @item.should_receive(:save)
         purchaser = Purchaser.new
         merchant = Merchant.new
@@ -107,6 +107,7 @@ describe ImportItem do
         )
 
         @item.normalize!
+        @item.data.should be_nil
       end
     end
 
